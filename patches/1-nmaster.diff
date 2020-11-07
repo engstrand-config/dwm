@@ -1,0 +1,82 @@
+diff --git a/config.h b/config.h
+index 53bf587..f25bf01 100644
+--- a/config.h
++++ b/config.h
+@@ -73,27 +73,27 @@ static const char *termcmd[]  = { "st", NULL };
+ 
+ static Key keys[] = {
+   /* general */
+-  { MODKEY,                       XK_p,      spawn,          {.v = dmenucmd }     },
+-  { MODKEY,                       XK_b,      togglebar,      {0}                  },
+-  { MODKEY,                       XK_j,      focusstack,     {.i = +1 }           },
+-  { MODKEY,                       XK_k,      focusstack,     {.i = -1 }           },
+-  { MODKEY,                       XK_i,      incnmaster,     {.i = +1 }           },
+-  { MODKEY,                       XK_d,      incnmaster,     {.i = -1 }           },
+-  { MODKEY,                       XK_h,      setmfact,       {.f = -0.05}         },
+-  { MODKEY,                       XK_l,      setmfact,       {.f = +0.05}         },
+-  { MODKEY,                       XK_Tab,    view,           {0}                  },
+-  { MODKEY,                       XK_t,      setlayout,      {.v = &layouts[0]}   },
+-  { MODKEY,                       XK_f,      setlayout,      {.v = &layouts[1]}   },
+-  { MODKEY,                       XK_m,      setlayout,      {.v = &layouts[2]}   },
+-  { MODKEY,                       XK_space,  setlayout,      {0}                  },
+-  { MODKEY|ShiftMask,             XK_space,  togglefloating, {0}                  },
+-  { MODKEY,                       XK_0,      view,           {.ui = ~0 }          },
+-  { MODKEY|ShiftMask,             XK_0,      tag,            {.ui = ~0 }          },
+-  { MODKEY,                       XK_comma,  focusmon,       {.i = -1 }           },
+-  { MODKEY,                       XK_period, focusmon,       {.i = +1 }           },
+-  { MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 }           },
+-  { MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 }           },
+-	{ MODKEY,			                  XK_q,		   killclient,	   {0}                  },
++  { MODKEY,                       XK_p,         spawn,          {.v = dmenucmd }     },
++  { MODKEY,                       XK_b,         togglebar,      {0}                  },
++  { MODKEY,                       XK_j,         focusstack,     {.i = +1 }           },
++  { MODKEY,                       XK_k,         focusstack,     {.i = -1 }           },
++  { MODKEY,                       XK_Page_Up,   incnmaster,     {.i = +1 }           },
++  { MODKEY,                       XK_Page_Down, incnmaster,     {.i = -1 }           },
++  { MODKEY,                       XK_Home,      setnmaster,     {.i = nmaster }      },
++  { MODKEY,                       XK_h,         setmfact,       {.f = -0.05}         },
++  { MODKEY,                       XK_l,         setmfact,       {.f = +0.05}         },
++  { MODKEY,                       XK_Tab,       view,           {0}                  },
++  { MODKEY,                       XK_t,         setlayout,      {.v = &layouts[0]}   },
++  { MODKEY,                       XK_y,         setlayout,      {.v = &layouts[1]}   },
++  { MODKEY,                       XK_space,     setlayout,      {0}                  },
++  { MODKEY|ShiftMask,             XK_space,     togglefloating, {0}                  },
++  { MODKEY,                       XK_0,         view,           {.ui = ~0 }          },
++  { MODKEY|ShiftMask,             XK_0,         tag,            {.ui = ~0 }          },
++  { MODKEY,                       XK_comma,     focusmon,       {.i = -1 }           },
++  { MODKEY,                       XK_period,    focusmon,       {.i = +1 }           },
++  { MODKEY|ShiftMask,             XK_comma,     tagmon,         {.i = -1 }           },
++  { MODKEY|ShiftMask,             XK_period,    tagmon,         {.i = +1 }           },
++	{ MODKEY,			                  XK_q,		      killclient,	    {0}                  },
+ 
+   /* applications */
+ 	{ MODKEY,			              XK_d,		                  spawn,          {.v = dmenucmd } },
+diff --git a/dwm.c b/dwm.c
+index afcb389..7f4442e 100644
+--- a/dwm.c
++++ b/dwm.c
+@@ -184,6 +184,7 @@ static int gettextprop(Window w, Atom atom, char *text, unsigned int size);
+ static void grabbuttons(Client *c, int focused);
+ static void grabkeys(void);
+ static void incnmaster(const Arg *arg);
++static void setnmaster(const Arg *arg);
+ static void keypress(XEvent *e);
+ static void killclient(const Arg *arg);
+ static void manage(Window w, XWindowAttributes *wa);
+@@ -980,8 +981,14 @@ grabkeys(void)
+ void
+ incnmaster(const Arg *arg)
+ {
+-	selmon->nmaster = MAX(selmon->nmaster + arg->i, 0);
+-	arrange(selmon);
++  setnmaster(&((Arg){.i=MAX(selmon->nmaster + arg->i, 0)}));
++}
++
++void
++setnmaster(const Arg *arg)
++{
++  selmon->nmaster = arg->i;
++  arrange(selmon);
+ }
+ 
+ #ifdef XINERAMA

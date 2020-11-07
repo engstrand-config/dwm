@@ -110,6 +110,11 @@ typedef struct {
 } Key;
 
 typedef struct {
+	const char * sig;
+	void (*func)(const Arg *);
+} Signal;
+
+typedef struct {
 	const char *symbol;
 	void (*arrange)(Monitor *);
 } Layout;
@@ -122,6 +127,7 @@ struct Monitor {
 	int by;               /* bar geometry */
 	int mx, my, mw, mh;   /* screen size */
 	int wx, wy, ww, wh;   /* window area  */
+  int gappiv, gappov, gappih, gappoh;
 	unsigned int seltags;
 	unsigned int sellt;
 	unsigned int tagset[2];
@@ -146,11 +152,6 @@ typedef struct {
 	int monitor;
 } Rule;
 
-typedef struct {
-	const char *sig;
-	void (*func)(const Arg*);
-} Signal;
-
 /* Xresources preferences */
 enum resource_type {
 	STRING = 0,
@@ -171,6 +172,7 @@ static void arrange(Monitor *m);
 static void arrangemon(Monitor *m);
 static void attach(Client *c);
 static void attachstack(Client *c);
+static int fake_signal(void);
 static void buttonpress(XEvent *e);
 static void centeredmaster(Monitor *m);
 static void checkotherwm(void);
@@ -200,9 +202,11 @@ static int gettextprop(Window w, Atom atom, char *text, unsigned int size);
 static void grabbuttons(Client *c, int focused);
 static void grabkeys(void);
 static void incnmaster(const Arg *arg);
+static void incgaps(const Arg *arg);
 static void setnmaster(const Arg *arg);
 static void keypress(XEvent *e);
 static void killclient(const Arg *arg);
+static void loadfonts();
 static void manage(Window w, XWindowAttributes *wa);
 static void mappingnotify(XEvent *e);
 static void maprequest(XEvent *e);
@@ -223,11 +227,13 @@ static void sendmon(Client *c, Monitor *m);
 static void setclientstate(Client *c, long state);
 static void setfocus(Client *c);
 static void setfullscreen(Client *c, int fullscreen);
+static void setgaps(int oh, int ov, int ih, int iv);
 static void setlayout(const Arg *arg);
 static void setlayoutex(const Arg *arg);
 static void setmfact(const Arg *arg);
 static void setup(void);
 static void seturgent(Client *c, int urg);
+static void defaultgaps(const Arg *arg);
 static void showhide(Client *c);
 static void sigchld(int unused);
 static void spawn(const Arg *arg);
@@ -238,6 +244,7 @@ static void tagmon(const Arg *arg);
 static void tile(Monitor *);
 static void togglebar(const Arg *arg);
 static void togglefloating(const Arg *arg);
+static void togglegaps(const Arg *arg);
 static void toggletag(const Arg *arg);
 static void toggletagex(const Arg *arg);
 static void toggleview(const Arg *arg);
@@ -265,7 +272,8 @@ static int xerrordummy(Display *dpy, XErrorEvent *ee);
 static int xerrorstart(Display *dpy, XErrorEvent *ee);
 static void xinitvisual();
 static void zoom(const Arg *arg);
-static void load_xresources(void);
+static void loadxresources(void);
+static void reloadxresources(const Arg *arg);
 static void resource_load(XrmDatabase db, char *name, enum resource_type rtype, void *dst);
 
 /* variables */
@@ -275,6 +283,8 @@ static int screen;
 static int sw, sh;           /* X display screen geometry width, height */
 static int bh, blw = 0;      /* bar geometry */
 static int lrpad;            /* sum of left and right padding for text */
+static int vp;               /* vertical padding for bar */
+static int sp;               /* side padding for bar */
 static int (*xerrorxlib)(Display *, XErrorEvent *);
 static unsigned int numlockmask = 0;
 static void (*handler[LASTEvent]) (XEvent *) = {
@@ -1043,6 +1053,49 @@ keypress(XEvent *e)
 			keys[i].func(&(keys[i].arg));
 }
 
+int
+fake_signal(void)
+{
+	char fsignal[256];
+	char indicator[9] = "fsignal:";
+	char str_sig[50];
+	char param[16];
+	int i, len_str_sig, n, paramn;
+	size_t len_fsignal, len_indicator = strlen(indicator);
+	Arg arg;
+
+	// Get root name property
+	if (gettextprop(root, XA_WM_NAME, fsignal, sizeof(fsignal))) {
+		len_fsignal = strlen(fsignal);
+
+		// Check if this is indeed a fake signal
+		if (len_indicator > len_fsignal ? 0 : strncmp(indicator, fsignal, len_indicator) == 0) {
+			paramn = sscanf(fsignal+len_indicator, "%s%n%s%n", str_sig, &len_str_sig, param, &n);
+
+			if (paramn == 1) arg = (Arg) {0};
+			else if (paramn > 2) return 1;
+			else if (strncmp(param, "i", n - len_str_sig) == 0)
+				sscanf(fsignal + len_indicator + n, "%i", &(arg.i));
+			else if (strncmp(param, "ui", n - len_str_sig) == 0)
+				sscanf(fsignal + len_indicator + n, "%u", &(arg.ui));
+			else if (strncmp(param, "f", n - len_str_sig) == 0)
+				sscanf(fsignal + len_indicator + n, "%f", &(arg.f));
+			else return 1;
+
+			// Check if a signal was found, and if so handle it
+			for (i = 0; i < LENGTH(signals); i++)
+				if (strncmp(str_sig, signals[i].sig, len_str_sig) == 0 && signals[i].func)
+					signals[i].func(&(arg));
+
+			// A fake signal was sent
+			return 1;
+		}
+	}
+
+	// No fake signal was sent, so proceed with update
+	return 0;
+}
+
 void
 killclient(const Arg *arg)
 {
@@ -1245,8 +1298,10 @@ propertynotify(XEvent *e)
 	Window trans;
 	XPropertyEvent *ev = &e->xproperty;
 
-	if ((ev->window == root) && (ev->atom == XA_WM_NAME))
-		updatestatus();
+	if ((ev->window == root) && (ev->atom == XA_WM_NAME)) {
+		if (!fake_signal())
+			updatestatus();
+	}
 	else if (ev->state == PropertyDelete)
 		return; /* ignore */
 	else if ((c = wintoclient(ev->window))) {
@@ -1557,6 +1612,16 @@ setmfact(const Arg *arg)
 }
 
 void
+loadfonts()
+{
+  drw = drw_create(dpy, screen, root, sw, sh, visual, depth, cmap);
+	if (!drw_fontset_create(drw, font))
+		die("no fonts could be loaded.");
+	lrpad = drw->fonts->h;
+	bh = MAX((drw->fonts->h + 2), barheight); // set bar height
+}
+
+void
 setup(void)
 {
 	int i;
@@ -1571,13 +1636,13 @@ setup(void)
 	sw = DisplayWidth(dpy, screen);
 	sh = DisplayHeight(dpy, screen);
 	root = RootWindow(dpy, screen);
+	sp = sidepad;
+	vp = (topbar == 1) ? vertpad : - vertpad;
+
 	xinitvisual();
-	drw = drw_create(dpy, screen, root, sw, sh, visual, depth, cmap);
-	if (!drw_fontset_create(drw, fonts, LENGTH(fonts)))
-		die("no fonts could be loaded.");
-	lrpad = drw->fonts->h;
-	bh = drw->fonts->h + 2;
+  loadfonts();
 	updategeom();
+
 	/* init atoms */
 	utf8string = XInternAtom(dpy, "UTF8_STRING", False);
 	wmatom[WMProtocols] = XInternAtom(dpy, "WM_PROTOCOLS", False);
@@ -2183,6 +2248,45 @@ wintoclient(Window w)
 	return NULL;
 }
 
+void
+setgaps(int oh, int ov, int ih, int iv)
+{
+	if (oh < 0) oh = 0;
+	if (ov < 0) ov = 0;
+	if (ih < 0) ih = 0;
+	if (iv < 0) iv = 0;
+
+	selmon->gappoh = oh;
+	selmon->gappov = ov;
+	selmon->gappih = ih;
+	selmon->gappiv = iv;
+	arrange(selmon);
+}
+
+void
+togglegaps(const Arg *arg)
+{
+	enablegaps = !enablegaps;
+	arrange(selmon);
+}
+
+void
+defaultgaps(const Arg *arg)
+{
+	setgaps(gappoh, gappov, gappih, gappiv);
+}
+
+void
+incgaps(const Arg *arg)
+{
+	setgaps(
+		selmon->gappoh + arg->i,
+		selmon->gappov + arg->i,
+		selmon->gappih + arg->i,
+		selmon->gappiv + arg->i
+	);
+}
+
 Monitor *
 wintomon(Window w)
 {
@@ -2323,7 +2427,7 @@ resource_load(XrmDatabase db, char *name, enum resource_type rtype, void *dst)
 }
 
 void
-load_xresources(void)
+loadxresources(void)
 {
 	Display *display;
 	char *resm;
@@ -2341,6 +2445,40 @@ load_xresources(void)
 	XCloseDisplay(display);
 }
 
+void
+reloadxresources(const Arg *arg)
+{
+  loadxresources();
+  loadfonts();
+
+  int i;
+  Client *c;
+  Monitor *m;
+	XConfigureEvent ce;
+
+  loadfonts();
+
+  for (i = 0; i < LENGTH(colors); i++) {
+    scheme[i] = drw_scm_create(drw, colors[i], 3, baralpha);
+  }
+
+	for (m = mons; m; m = m->next) {
+		for (c = m->clients; c; c = c->next) {
+      c->bw = borderpx;
+      /* a more lightweight version of configure(c) */
+      ce.border_width = c->bw;
+      XSendEvent(dpy, c->win, False, StructureNotifyMask, (XEvent *)&ce);
+		}
+
+    updatebarpos(selmon);
+    XMoveResizeWindow(dpy, selmon->barwin, selmon->wx + sp, selmon->by + vp, selmon->ww - 2 * sp, bh);
+    arrange(m);
+  }
+
+  defaultgaps(NULL);
+  focus(NULL);
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -2354,7 +2492,7 @@ main(int argc, char *argv[])
 		die("dwm: cannot open display");
 	checkotherwm();
 	XrmInitialize();
-	load_xresources();
+	loadxresources();
 	setup();
 #ifdef __OpenBSD__
 	if (pledge("stdio rpath proc exec", NULL) == -1)

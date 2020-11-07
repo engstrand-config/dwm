@@ -4,10 +4,12 @@
 static const unsigned int snap      = 32;       /* snap pixel */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
+static const int vertpad            = 0;        /* vertical padding of bar */
+static const int sidepad            = 0;        /* horizontal padding of bar */
+static const int statustextsidepad  = 10;       /* right side padding for statustext */
 
 /* appearance */
 static char font[]                  = "JetBrains Mono NL:style=Bold:size=9:antialias=true:autohint=true";
-static char *fonts[] = { font, "monospace:size=10" };
 
 static unsigned int baralpha        = 225;      /* transparency of bar */
 static unsigned int barheight       = 20;       /* height of the bar */
@@ -16,6 +18,7 @@ static unsigned int gappih          = 10;       /* horiz inner gap between windo
 static unsigned int gappiv          = 10;       /* vert inner gap between windows */
 static unsigned int gappoh          = 10;       /* horiz outer gap between windows and screen edge */
 static unsigned int gappov          = 10;       /* vert outer gap between windows and screen edge */
+static unsigned int enablegaps      = 1;        /* enables gaps, used by togglegaps */
 static char normbgcolor[]           = "#222222";
 static char normbordercolor[]       = "#444444";
 static char normfgcolor[]           = "#bbbbbb";
@@ -215,25 +218,28 @@ ResourcePref resources[] = {
 /* signum must be greater than 0 */
 /* trigger signals using `xsetroot -name "fsignal:<signame> [<type> <value>]"` */
 static Signal signals[] = {
-	{ "focusstack",     focusstack      },
-	{ "setmfact",       setmfact        },
-	{ "togglebar",      togglebar       },
-	{ "incnmaster",     incnmaster      },
-	{ "togglefloating", togglefloating  },
-	{ "focusmon",       focusmon        },
-	{ "tagmon",         tagmon          },
-	{ "zoom",           zoom            },
-	{ "view",           view            },
-	{ "viewall",        viewall         },
-	{ "viewex",         viewex          },
-	{ "toggleview",     view            },
-	{ "toggleviewex",   toggleviewex    },
-	{ "tag",            tag             },
-	{ "tagall",         tagall          },
-	{ "tagex",          tagex           },
-	{ "toggletag",      tag             },
-	{ "toggletagex",    toggletagex     },
-	{ "killclient",     killclient      },
-	{ "setlayout",      setlayout       },
-	{ "setlayoutex",    setlayoutex     },
+	{ "focusstack",     focusstack        },
+	{ "setmfact",       setmfact          },
+	{ "togglebar",      togglebar         },
+	{ "incnmaster",     incnmaster        },
+	{ "togglefloating", togglefloating    },
+	{ "focusmon",       focusmon          },
+	{ "tagmon",         tagmon            },
+	{ "zoom",           zoom              },
+	{ "view",           view              },
+	{ "viewall",        viewall           },
+	{ "viewex",         viewex            },
+	{ "toggleview",     view              },
+	{ "toggleviewex",   toggleviewex      },
+	{ "incgaps",        incgaps           },
+	{ "togglegaps",     togglegaps        },
+	{ "tag",            tag               },
+	{ "tagall",         tagall            },
+	{ "tagex",          tagex             },
+	{ "toggletag",      tag               },
+	{ "toggletagex",    toggletagex       },
+	{ "killclient",     killclient        },
+	{ "setlayout",      setlayout         },
+	{ "setlayoutex",    setlayoutex       },
+	{ "xresources",     reloadxresources  },
 };

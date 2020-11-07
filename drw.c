@@ -170,20 +170,17 @@ xfont_free(Fnt *font)
 }
 
 Fnt*
-drw_fontset_create(Drw* drw, char *fonts[], size_t fontcount)
+drw_fontset_create(Drw* drw, char font[])
 {
 	Fnt *cur, *ret = NULL;
-	size_t i;
-
-	if (!drw || !fonts)
+	if (!drw || !font)
 		return NULL;
 
-	for (i = 1; i <= fontcount; i++) {
-		if ((cur = xfont_create(drw, fonts[fontcount - i], NULL))) {
-			cur->next = ret;
-			ret = cur;
-		}
-	}
+  if ((cur = xfont_create(drw, font, NULL))) {
+    cur->next = ret;
+    ret = cur;
+  }
+
 	return (drw->fonts = ret);
 }
 

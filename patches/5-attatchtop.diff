@@ -1,0 +1,88 @@
+From 17acbdcb56d0d2f39507a3f67ef329c14a213ef6 Mon Sep 17 00:00:00 2001
+From: MLquest8 <miskuzius@gmail.com>
+Date: Thu, 18 Jun 2020 15:34:18 +0400
+Subject: [PATCH] attachtop. Attaches new client below the last master/on top
+ of the stack. In case of nmaster = 1 behaves like attachaside.
+
+---
+ dwm.c | 29 +++++++++++++++++++++++++----
+ 1 file changed, 25 insertions(+), 4 deletions(-)
+
+diff --git a/dwm.c b/dwm.c
+index 9fd0286..7ced982 100644
+--- a/dwm.c
++++ b/dwm.c
+@@ -49,7 +49,8 @@
+ #define CLEANMASK(mask)         (mask & ~(numlockmask|LockMask) & (ShiftMask|ControlMask|Mod1Mask|Mod2Mask|Mod3Mask|Mod4Mask|Mod5Mask))
+ #define INTERSECT(x,y,w,h,m)    (MAX(0, MIN((x)+(w),(m)->wx+(m)->ww) - MAX((x),(m)->wx)) \
+                                * MAX(0, MIN((y)+(h),(m)->wy+(m)->wh) - MAX((y),(m)->wy)))
+-#define ISVISIBLE(C)            ((C->tags & C->mon->tagset[C->mon->seltags]))
++#define ISVISIBLEONTAG(C, T)    ((C->tags & T))
++#define ISVISIBLE(C)            ISVISIBLEONTAG(C, C->mon->tagset[C->mon->seltags])
+ #define LENGTH(X)               (sizeof X / sizeof X[0])
+ #define MOUSEMASK               (BUTTONMASK|PointerMotionMask)
+ #define WIDTH(X)                ((X)->w + 2 * (X)->bw)
+@@ -147,6 +148,7 @@ static int applysizehints(Client *c, int *x, int *y, int *w, int *h, int interac
+ static void arrange(Monitor *m);
+ static void arrangemon(Monitor *m);
+ static void attach(Client *c);
++static void attachtop(Client *c);
+ static void attachstack(Client *c);
+ static void buttonpress(XEvent *e);
+ static void checkotherwm(void);
+@@ -407,6 +409,25 @@ attach(Client *c)
+ 	c->mon->clients = c;
+ }
+
++void
++attachtop(Client *c)
++{
++	int n;
++	Monitor *m = selmon;
++	Client *below;
++
++	for (n = 1, below = c->mon->clients;
++		below && below->next && (below->isfloating || !ISVISIBLEONTAG(below, c->tags) || n != m->nmaster);
++		n = below->isfloating || !ISVISIBLEONTAG(below, c->tags) ? n + 0 : n + 1, below = below->next);
++	c->next = NULL;
++	if (below) {
++		c->next = below->next;
++		below->next = c;
++	}
++	else
++		c->mon->clients = c;
++}
++
+ void
+ attachstack(Client *c)
+ {
+@@ -1063,7 +1084,7 @@ manage(Window w, XWindowAttributes *wa)
+ 		c->isfloating = c->oldstate = trans != None || c->isfixed;
+ 	if (c->isfloating)
+ 		XRaiseWindow(dpy, c->win);
+-	attach(c);
++	attachtop(c);
+ 	attachstack(c);
+ 	XChangeProperty(dpy, root, netatom[NetClientList], XA_WINDOW, 32, PropModeAppend,
+ 		(unsigned char *) &(c->win), 1);
+@@ -1418,7 +1439,7 @@ sendmon(Client *c, Monitor *m)
+ 	detachstack(c);
+ 	c->mon = m;
+ 	c->tags = m->tagset[m->seltags]; /* assign tags of target monitor */
+-	attach(c);
++	attachtop(c);
+ 	attachstack(c);
+ 	focus(NULL);
+ 	arrange(NULL);
+@@ -1900,7 +1921,7 @@ updategeom(void)
+ 					m->clients = c->next;
+ 					detachstack(c);
+ 					c->mon = mons;
+-					attach(c);
++					attachtop(c);
+ 					attachstack(c);
+ 				}
+ 				if (m == selmon)
+--
+2.26.2
+

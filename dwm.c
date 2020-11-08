@@ -260,6 +260,7 @@ static void sigchld(int unused);
 static void sigdsblocks(const Arg *arg);
 static void spawn(const Arg *arg);
 static int stackpos(const Arg *arg);
+static void startdsblocks(void);
 static void tag(const Arg *arg);
 static void tagall(const Arg *arg);
 static void tagex(const Arg *arg);
@@ -2983,6 +2984,12 @@ reloadxresources(const Arg *arg)
   focus(NULL);
 }
 
+void
+startdsblocks()
+{
+  system("export STATUSBAR=\"dsblocks\" ; pidof -s dsblocks >/dev/null || dsblocks &");
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -3005,6 +3012,7 @@ main(int argc, char *argv[])
     die("pledge");
 #endif /* __OpenBSD__ */
   scan();
+  startdsblocks();
   run();
   cleanup();
   XCloseDisplay(dpy);

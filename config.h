@@ -75,10 +75,13 @@ static const Layout layouts[] = {
 /* key definitions */
 #define MODKEY Mod4Mask
 #define TAGKEYS(KEY,TAG) \
-{ MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
-{ MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
-{ MODKEY|ShiftMask,             KEY,      tag,            {.ui = 1 << TAG} }, \
-{ MODKEY|ControlMask|ShiftMask, KEY,      toggletag,      {.ui = 1 << TAG} },
+  { MODKEY,                       KEY,      view,           {.ui = 1 << TAG} }, \
+  { MODKEY|ControlMask,           KEY,      toggleview,     {.ui = 1 << TAG} }, \
+  { MODKEY|ShiftMask,             KEY,      tag,            {.ui = 1 << TAG} }, \
+  { MODKEY|ControlMask|ShiftMask, KEY,      toggletag,      {.ui = 1 << TAG} },
+#define STACKKEYS(MOD,ACTION) \
+	{ MOD,	XK_j,	ACTION##stack,	{.i = INC(+1) } }, \
+	{ MOD,	XK_k,	ACTION##stack,	{.i = INC(-1) } },
 
 /* helper for spawning shell commands in the pre dwm-5.0 fashion */
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
@@ -90,28 +93,26 @@ static const char *termcmd[]  = { "st", NULL };
 
 static Key keys[] = {
   /* general */
-  { MODKEY,                       XK_p,         spawn,          {.v = dmenucmd }     },
-  { MODKEY,                       XK_b,         togglebar,      {0}                  },
-  { MODKEY,                       XK_j,         focusstack,     {.i = +1 }           },
-  { MODKEY,                       XK_k,         focusstack,     {.i = -1 }           },
-  { MODKEY,                       XK_Page_Up,   incnmaster,     {.i = +1 }           },
-  { MODKEY,                       XK_Page_Down, incnmaster,     {.i = -1 }           },
-  { MODKEY,                       XK_Home,      setnmaster,     {.i = nmaster }      },
-  { MODKEY,                       XK_h,         setmfact,       {.f = -0.05}         },
-  { MODKEY,                       XK_l,         setmfact,       {.f = +0.05}         },
-  { MODKEY,                       XK_Tab,       view,           {0}                  },
-  { MODKEY,                       XK_t,         setlayout,      {.v = &layouts[0]}   },
-  { MODKEY,                       XK_y,         setlayout,      {.v = &layouts[1]}   },
-  { MODKEY,                       XK_space,     zoom,           {0}                  },
-  { MODKEY|ShiftMask,             XK_space,     togglefloating, {0}                  },
-  { MODKEY,                       XK_f,         togglefullscr,  {0}                  },
-  { MODKEY,                       XK_0,         view,           {.ui = ~0 }          },
-  { MODKEY|ShiftMask,             XK_0,         tag,            {.ui = ~0 }          },
-  { MODKEY,                       XK_Left,      focusmon,       {.i = -1 }           },
-  { MODKEY,                       XK_Right,     focusmon,       {.i = +1 }           },
-  { MODKEY|ShiftMask,             XK_Left,      tagmon,         {.i = -1 }           },
-  { MODKEY|ShiftMask,             XK_Right,     tagmon,         {.i = +1 }           },
-	{ MODKEY,			                  XK_q,		      killclient,	    {0}                  },
+  { MODKEY,                   XK_p,         spawn,          {.v = dmenucmd }     },
+  { MODKEY,                   XK_b,         togglebar,      {0}                  },
+  { MODKEY,                   XK_Page_Up,   incnmaster,     {.i = +1 }           },
+  { MODKEY,                   XK_Page_Down, incnmaster,     {.i = -1 }           },
+  { MODKEY,                   XK_Home,      setnmaster,     {.i = nmaster }      },
+  { MODKEY,                   XK_h,         setmfact,       {.f = -0.05}         },
+  { MODKEY,                   XK_l,         setmfact,       {.f = +0.05}         },
+  { MODKEY,                   XK_Tab,       view,           {0}                  },
+  { MODKEY,                   XK_t,         setlayout,      {.v = &layouts[0]}   },
+  { MODKEY,                   XK_y,         setlayout,      {.v = &layouts[1]}   },
+  { MODKEY,                   XK_space,     zoom,           {0}                  },
+  { MODKEY|ShiftMask,         XK_space,     togglefloating, {0}                  },
+  { MODKEY,                   XK_f,         togglefullscr,  {0}                  },
+  { MODKEY,                   XK_0,         view,           {.ui = ~0 }          },
+  { MODKEY|ShiftMask,         XK_0,         tag,            {.ui = ~0 }          },
+  { MODKEY,                   XK_Left,      focusmon,       {.i = -1 }           },
+  { MODKEY,                   XK_Right,     focusmon,       {.i = +1 }           },
+  { MODKEY|ShiftMask,         XK_Left,      tagmon,         {.i = -1 }           },
+  { MODKEY|ShiftMask,         XK_Right,     tagmon,         {.i = +1 }           },
+	{ MODKEY,			              XK_q,		      killclient,	    {0}                  },
 
   /* applications */
 	{ MODKEY,			              XK_d,		                  spawn,          {.v = dmenucmd } },
@@ -172,15 +173,17 @@ static Key keys[] = {
 	{ 0,                        XF86XK_MonBrightnessDown,	spawn,	        SHCMD("xbacklight -dec 11") },
 
   /* tags */
-  TAGKEYS(                        XK_1,                      0)
-  TAGKEYS(                        XK_2,                      1)
-  TAGKEYS(                        XK_3,                      2)
-  TAGKEYS(                        XK_4,                      3)
-  TAGKEYS(                        XK_5,                      4)
-  TAGKEYS(                        XK_6,                      5)
-  TAGKEYS(                        XK_7,                      6)
-  TAGKEYS(                        XK_8,                      7)
-  TAGKEYS(                        XK_9,                      8)
+  TAGKEYS(                    XK_1,                     0      )
+  TAGKEYS(                    XK_2,                     1      )
+  TAGKEYS(                    XK_3,                     2      )
+  TAGKEYS(                    XK_4,                     3      )
+  TAGKEYS(                    XK_5,                     4      )
+  TAGKEYS(                    XK_6,                     5      )
+  TAGKEYS(                    XK_7,                     6      )
+  TAGKEYS(                    XK_8,                     7      )
+  TAGKEYS(                    XK_9,                     8      )
+	STACKKEYS(                  MODKEY,                   focus  )
+	STACKKEYS(                  MODKEY|ShiftMask,         push   )
 };
 
 /* button definitions */

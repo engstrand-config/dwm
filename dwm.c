@@ -2721,7 +2721,7 @@ swallowingclient(Window w)
   return NULL;
 }
 
-  Client *
+Client *
 wintoclient(Window w)
 {
   Client *c;
@@ -2773,7 +2773,7 @@ incgaps(const Arg *arg)
       );
 }
 
-  Monitor *
+Monitor *
 wintomon(Window w)
 {
   int x, y;

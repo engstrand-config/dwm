@@ -596,12 +596,12 @@ pushstack(const Arg *arg) {
 unsigned int
 monhasgaps(Monitor *m)
 {
-  return (
-      m->gappiv != 0 ||
-      m->gappih != 0 ||
-      m->gappov != 0 ||
-      m->gappoh != 0
-      );
+  return (gapsenabled && (
+    m->gappiv != 0 ||
+    m->gappih != 0 ||
+    m->gappov != 0 ||
+    m->gappoh != 0
+  ));
 }
 
 void
@@ -2068,7 +2068,7 @@ tagmon(const Arg *arg)
 void
 tile(Monitor *m)
 {
-  unsigned int i, n, h, r, oe = enablegaps, ie = enablegaps, mw, my, ty, bw;
+  unsigned int i, n, h, r, oe = gapsenabled, ie = gapsenabled, mw, my, ty, bw;
   Client *c;
 
   for (n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++);
@@ -2829,7 +2829,7 @@ setgaps(int oh, int ov, int ih, int iv)
 void
 togglegaps(const Arg *arg)
 {
-  enablegaps = !enablegaps;
+  gapsenabled = !gapsenabled;
   arrange(selmon);
 }
 

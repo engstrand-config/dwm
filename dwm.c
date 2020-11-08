@@ -1827,7 +1827,10 @@ setlayout(const Arg *arg)
 void
 setlayoutex(const Arg *arg)
 {
-  setlayout(&((Arg){.v = &layouts[arg->i]}));
+  unsigned int i = selmon->sellt + arg->i;
+  if (i == LENGTH(layouts))
+    i = 0;
+  setlayout(&((Arg){.v = &layouts[i]}));
 }
 
 /* arg > 1.0 will set mfact absolutely */

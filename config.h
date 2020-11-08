@@ -2,6 +2,7 @@
 
 /* general */
 static const unsigned int snap      = 32;       /* snap pixel */
+static const int smartgaps          = 0;        /* 1 means no outer gap when there is only one window */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 static const int vertpad            = 0;        /* vertical padding of bar */
@@ -234,6 +235,7 @@ static Signal signals[] = {
 	{ "toggleviewex",   toggleviewex      },
 	{ "incgaps",        incgaps           },
 	{ "togglegaps",     togglegaps        },
+	{ "defaultgaps",    defaultgaps       },
 	{ "tag",            tag               },
 	{ "tagall",         tagall            },
 	{ "tagex",          tagex             },

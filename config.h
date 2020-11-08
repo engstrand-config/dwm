@@ -93,8 +93,8 @@ static const char *termcmd[]  = { "st", NULL };
 
 static Key keys[] = {
   /* general */
-  { MODKEY,                   XK_p,         spawn,          {.v = dmenucmd }     },
   { MODKEY,                   XK_b,         togglebar,      {0}                  },
+  { MODKEY,                   XK_g,         togglegaps,     {0}                  },
   { MODKEY,                   XK_Page_Up,   incnmaster,     {.i = +1 }           },
   { MODKEY,                   XK_Page_Down, incnmaster,     {.i = -1 }           },
   { MODKEY,                   XK_Home,      setnmaster,     {.i = nmaster }      },

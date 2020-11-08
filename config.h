@@ -30,11 +30,15 @@ static char selbgcolor[]            = "#005577";
 static char titlebgcolor[]          = "#005577";
 static char titlefgcolor[]          = "#eeeeee";
 static char titlebordercolor[]      = "#005577";
+static char statusbgcolor[]         = "#005577";
+static char statusfgcolor[]         = "#eeeeee";
+static char statusbordercolor[]     = "#005577";
 
 static char *colors[][3] = {
-  [SchemeNorm]   = { normfgcolor,    normbgcolor,        normbordercolor   },
-  [SchemeSel]    = { selfgcolor,     selbgcolor,         selbordercolor    },
-  [SchemeTitle]  = { titlefgcolor,   titlebgcolor,       titlebordercolor  },
+  [SchemeNorm]   = { normfgcolor,    normbgcolor,    normbordercolor   },
+  [SchemeSel]    = { selfgcolor,     selbgcolor,     selbordercolor    },
+  [SchemeTitle]  = { titlefgcolor,   titlebgcolor,   titlebordercolor  },
+  [SchemeStatus] = { statusfgcolor,  statusbgcolor,  statusbordercolor },
 };
 
 /* tagging */
@@ -183,38 +187,43 @@ static Key keys[] = {
 /* click can be ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle, ClkClientWin, or ClkRootWin */
 static Button buttons[] = {
   /* click                event mask      button          function        argument */
-  { ClkLtSymbol,          0,              Button1,        setlayout,      {0}                },
-  { ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
-  { ClkWinTitle,          0,              Button2,        zoom,           {0}                },
-  { ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd }    },
-  { ClkClientWin,         MODKEY,         Button1,        movemouse,      {0}                },
-  { ClkClientWin,         MODKEY,         Button2,        togglefloating, {0}                },
-  { ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0}                },
-  { ClkTagBar,            0,              Button1,        view,           {0}                },
-  { ClkTagBar,            0,              Button3,        toggleview,     {0}                },
-  { ClkTagBar,            MODKEY,         Button1,        tag,            {0}                },
-  { ClkTagBar,            MODKEY,         Button3,        toggletag,      {0}                },
+  { ClkLtSymbol,          0,              Button1,        setlayout,      {0}                 },
+  { ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]}  },
+  { ClkWinTitle,          0,              Button2,        zoom,           {0}                 },
+  { ClkStatusText,        0,              Button1,        sigdsblocks,    {.i = 1}            },
+  { ClkStatusText,        0,              Button2,        sigdsblocks,    {.i = 2}            },
+  { ClkStatusText,        0,              Button3,        sigdsblocks,    {.i = 3}            },
+  { ClkClientWin,         MODKEY,         Button1,        movemouse,      {0}                 },
+  { ClkClientWin,         MODKEY,         Button2,        togglefloating, {0}                 },
+  { ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0}                 },
+  { ClkTagBar,            0,              Button1,        view,           {0}                 },
+  { ClkTagBar,            0,              Button3,        toggleview,     {0}                 },
+  { ClkTagBar,            MODKEY,         Button1,        tag,            {0}                 },
+  { ClkTagBar,            MODKEY,         Button3,        toggletag,      {0}                 },
 };
 
 /* Xresources preferences to load at startup */
 ResourcePref resources[] = {
-		{ "font",                       STRING,  &font },
-		{ "barHeight",                  INTEGER, &barheight },
-		{ "barAlpha",                   INTEGER, &baralpha },
-		{ "background",                 STRING,  &normbgcolor },
-		{ "foreground",                 STRING,  &normfgcolor },
-		{ "borderColor",                STRING,  &normbordercolor },
-		{ "selectedBackground",         STRING,  &selbgcolor },
-		{ "selectedForeground",         STRING,  &selfgcolor },
-		{ "selectedBorderColor",        STRING,  &selbordercolor },
-		{ "titleBackground",            STRING,  &titlebgcolor },
-		{ "titleForeground",            STRING,  &titlefgcolor },
-		{ "titleBorderColor",           STRING,  &titlebordercolor },
-		{ "borderSize",          	      INTEGER, &borderpx },
-		{ "gapsInner",          	      INTEGER, &gappih },
-		{ "gapsInner",          	      INTEGER, &gappiv },
-		{ "gapsOuter",          	      INTEGER, &gappoh },
-		{ "gapsOuter",          	      INTEGER, &gappov },
+		{ "font",                    STRING,         &font               },
+		{ "barHeight",               INTEGER,        &barheight          },
+		{ "barAlpha",                INTEGER,        &baralpha           },
+		{ "background",              STRING,         &normbgcolor        },
+		{ "foreground",              STRING,         &normfgcolor        },
+		{ "borderColor",             STRING,         &normbordercolor    },
+		{ "selectedBackground",      STRING,         &selbgcolor         },
+		{ "selectedForeground",      STRING,         &selfgcolor         },
+		{ "selectedBorderColor",     STRING,         &selbordercolor     },
+		{ "titleBackground",         STRING,         &titlebgcolor       },
+		{ "titleForeground",         STRING,         &titlefgcolor       },
+		{ "titleBorderColor",        STRING,         &titlebordercolor   },
+		{ "statusBackground",        STRING,         &statusbgcolor      },
+		{ "statusForeground",        STRING,         &statusfgcolor      },
+		{ "statusBorderColor",       STRING,         &statusbordercolor  },
+		{ "borderSize",          	   INTEGER,        &borderpx           },
+		{ "gapsInner",          	   INTEGER,        &gappih             },
+		{ "gapsInner",          	   INTEGER,        &gappiv             },
+		{ "gapsOuter",          	   INTEGER,        &gappoh             },
+		{ "gapsOuter",          	   INTEGER,        &gappov             },
 };
 
 /* signal definitions */

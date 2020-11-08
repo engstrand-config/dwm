@@ -8,6 +8,7 @@ static const int topbar             = 1;        /* 0 means bottom bar */
 static const int vertpad            = 0;        /* vertical padding of bar */
 static const int sidepad            = 0;        /* horizontal padding of bar */
 static const int statustextsidepad  = 10;       /* right side padding for statustext */
+static const int swallowfloating    = 0;        /* 1 means swallow floating windows by default */
 
 /* appearance */
 static char font[]                  = "JetBrains Mono NL:style=Bold:size=9:antialias=true:autohint=true";

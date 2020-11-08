@@ -103,10 +103,10 @@ static Key keys[] = {
   { MODKEY,                       XK_f,         togglefullscr,  {0}                  },
   { MODKEY,                       XK_0,         view,           {.ui = ~0 }          },
   { MODKEY|ShiftMask,             XK_0,         tag,            {.ui = ~0 }          },
-  { MODKEY,                       XK_comma,     focusmon,       {.i = -1 }           },
-  { MODKEY,                       XK_period,    focusmon,       {.i = +1 }           },
-  { MODKEY|ShiftMask,             XK_comma,     tagmon,         {.i = -1 }           },
-  { MODKEY|ShiftMask,             XK_period,    tagmon,         {.i = +1 }           },
+  { MODKEY,                       XK_Left,      focusmon,       {.i = -1 }           },
+  { MODKEY,                       XK_Right,     focusmon,       {.i = +1 }           },
+  { MODKEY|ShiftMask,             XK_Left,      tagmon,         {.i = -1 }           },
+  { MODKEY|ShiftMask,             XK_Right,     tagmon,         {.i = +1 }           },
 	{ MODKEY,			                  XK_q,		      killclient,	    {0}                  },
 
   /* applications */

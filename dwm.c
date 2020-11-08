@@ -78,13 +78,14 @@
 
 /* enums */
 enum { CurNormal, CurHand, CurResize, CurMove, CurLast      }; /* cursor */
-enum { SchemeNorm, SchemeSel, SchemeTitle, SchemeStatus     }; /* color schemes */
+enum { SchemeNorm, SchemeSel, SchemeTitle, SchemeSuccess,
+       SchemeSuccessBg, SchemeCritical, SchemeCriticalBg    }; /* color schemes */
 enum { WMProtocols, WMDelete, WMState, WMTakeFocus, WMLast  }; /* default atoms */
 enum { NetSupported, NetWMName, NetWMState, NetWMCheck,
-  NetWMFullscreen, NetActiveWindow, NetWMWindowType,
-  NetWMWindowTypeDialog, NetClientList, NetLast        }; /* EWMH atoms */
+       NetWMFullscreen, NetActiveWindow, NetWMWindowType,
+       NetWMWindowTypeDialog, NetClientList, NetLast        }; /* EWMH atoms */
 enum { ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle,
-  ClkClientWin, ClkRootWin, ClkLast                    }; /* clicks */
+       ClkClientWin, ClkRootWin, ClkLast                    }; /* clicks */
 
 typedef union {
   int i;
@@ -763,6 +764,7 @@ clientmessage(XEvent *e)
 {
   XClientMessageEvent *cme = &e->xclient;
   Client *c = wintoclient(cme->window);
+  unsigned int i = 0;
 
   if (!c)
     return;
@@ -772,8 +774,14 @@ clientmessage(XEvent *e)
       setfullscreen(c, (cme->data.l[0] == 1 /* _NET_WM_STATE_ADD    */
             || (cme->data.l[0] == 2 /* _NET_WM_STATE_TOGGLE */ && !c->isfullscreen)));
   } else if (cme->message_type == netatom[NetActiveWindow]) {
-    if (c != selmon->sel && !c->isurgent)
-      seturgent(c, 1);
+		for (i = 0; i < LENGTH(tags) && !((1 << i) & c->tags); i++);
+		if (i < LENGTH(tags)) {
+			const Arg a = {.ui = 1 << i};
+			selmon = c->mon;
+			view(&a);
+			focus(c);
+			restack(selmon);
+		}
   }
 }
 

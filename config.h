@@ -30,15 +30,17 @@ static char selbgcolor[]            = "#005577";
 static char titlebgcolor[]          = "#005577";
 static char titlefgcolor[]          = "#eeeeee";
 static char titlebordercolor[]      = "#005577";
-static char statusbgcolor[]         = "#005577";
-static char statusfgcolor[]         = "#eeeeee";
-static char statusbordercolor[]     = "#005577";
+static char successcolor[]          = "#005577";
+static char criticalcolor[]          = "#005577";
 
 static char *colors[][3] = {
-  [SchemeNorm]   = { normfgcolor,    normbgcolor,    normbordercolor   },
-  [SchemeSel]    = { selfgcolor,     selbgcolor,     selbordercolor    },
-  [SchemeTitle]  = { titlefgcolor,   titlebgcolor,   titlebordercolor  },
-  [SchemeStatus] = { statusfgcolor,  statusbgcolor,  statusbordercolor },
+  [SchemeNorm]        = { normfgcolor,    normbgcolor,    normbordercolor   },
+  [SchemeSel]         = { selfgcolor,     selbgcolor,     selbordercolor    },
+  [SchemeTitle]       = { titlefgcolor,   titlebgcolor,   titlebordercolor  },
+  [SchemeSuccess]     = { successcolor,   normbgcolor,    normbordercolor   },
+  [SchemeSuccessBg]   = { selfgcolor,     successcolor,   successcolor      },
+  [SchemeCritical]    = { criticalcolor,  normbgcolor,    normbordercolor   },
+  [SchemeCriticalBg]  = { selfgcolor,     criticalcolor,  criticalcolor     },
 };
 
 /* tagging */
@@ -206,26 +208,25 @@ static Button buttons[] = {
 
 /* Xresources preferences to load at startup */
 ResourcePref resources[] = {
-		{ "font",                    STRING,         &font               },
-		{ "barHeight",               INTEGER,        &barheight          },
-		{ "barAlpha",                INTEGER,        &baralpha           },
-		{ "background",              STRING,         &normbgcolor        },
-		{ "foreground",              STRING,         &normfgcolor        },
-		{ "borderColor",             STRING,         &normbordercolor    },
-		{ "selectedBackground",      STRING,         &selbgcolor         },
-		{ "selectedForeground",      STRING,         &selfgcolor         },
-		{ "selectedBorderColor",     STRING,         &selbordercolor     },
-		{ "titleBackground",         STRING,         &titlebgcolor       },
-		{ "titleForeground",         STRING,         &titlefgcolor       },
-		{ "titleBorderColor",        STRING,         &titlebordercolor   },
-		{ "statusBackground",        STRING,         &statusbgcolor      },
-		{ "statusForeground",        STRING,         &statusfgcolor      },
-		{ "statusBorderColor",       STRING,         &statusbordercolor  },
-		{ "borderSize",          	   INTEGER,        &borderpx           },
-		{ "gapsInner",          	   INTEGER,        &gappih             },
-		{ "gapsInner",          	   INTEGER,        &gappiv             },
-		{ "gapsOuter",          	   INTEGER,        &gappoh             },
-		{ "gapsOuter",          	   INTEGER,        &gappov             },
+	{ "font",                    STRING,         &font                },
+	{ "barHeight",               INTEGER,        &barheight           },
+	{ "barAlpha",                INTEGER,        &baralpha            },
+	{ "background",              STRING,         &normbgcolor         },
+	{ "foreground",              STRING,         &normfgcolor         },
+	{ "borderColor",             STRING,         &normbordercolor     },
+	{ "selectedBackground",      STRING,         &selbgcolor          },
+	{ "selectedForeground",      STRING,         &selfgcolor          },
+	{ "selectedBorderColor",     STRING,         &selbordercolor      },
+	{ "titleBackground",         STRING,         &titlebgcolor        },
+	{ "titleForeground",         STRING,         &titlefgcolor        },
+	{ "titleBorderColor",        STRING,         &titlebordercolor    },
+	{ "success",                 STRING,         &successcolor        },
+	{ "critical",                STRING,         &criticalcolor       },
+	{ "borderSize",          	   INTEGER,        &borderpx            },
+	{ "gapsInner",          	   INTEGER,        &gappih              },
+	{ "gapsInner",          	   INTEGER,        &gappiv              },
+	{ "gapsOuter",          	   INTEGER,        &gappoh              },
+	{ "gapsOuter",          	   INTEGER,        &gappov              },
 };
 
 /* signal definitions */

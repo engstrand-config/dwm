@@ -82,8 +82,8 @@ static const Layout layouts[] = {
   { MODKEY|ShiftMask,             KEY,      tag,            {.ui = 1 << TAG} }, \
   { MODKEY|ControlMask|ShiftMask, KEY,      toggletag,      {.ui = 1 << TAG} },
 #define STACKKEYS(MOD,ACTION) \
-	{ MOD,	XK_j,	ACTION##stack,	{.i = INC(+1) } }, \
-	{ MOD,	XK_k,	ACTION##stack,	{.i = INC(-1) } },
+	{ MOD,	XK_j,	ACTION##stack,	{.i = +1 } }, \
+	{ MOD,	XK_k,	ACTION##stack,	{.i = -1 } },
 
 /* helper for spawning shell commands in the pre dwm-5.0 fashion */
 #define SHCMD(cmd) { .v = (const char*[]){ "/bin/sh", "-c", cmd, NULL } }
@@ -200,6 +200,8 @@ static Button buttons[] = {
   { ClkStatusText,        0,              Button1,        sigdsblocks,    {.i = 1}            },
   { ClkStatusText,        0,              Button2,        sigdsblocks,    {.i = 2}            },
   { ClkStatusText,        0,              Button3,        sigdsblocks,    {.i = 3}            },
+  { ClkStatusText,        0,              Button4,        sigdsblocks,    {.i = 4}            },
+  { ClkStatusText,        0,              Button5,        sigdsblocks,    {.i = 5}            },
   { ClkClientWin,         MODKEY,         Button1,        movemouse,      {0}                 },
   { ClkClientWin,         MODKEY,         Button2,        togglefloating, {0}                 },
   { ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0}                 },

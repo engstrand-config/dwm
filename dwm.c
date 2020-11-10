@@ -321,7 +321,7 @@ static int statushandcursor;
 static unsigned int dsblockssig;
 static int screen;
 static int sw, sh;           /* X display screen geometry width, height */
-static int bh, blw = 0;      /* bar geometry */
+static int bh, blw, ble = 0; /* bar geometry */
 static int lrpad;            /* sum of left and right padding for text */
 static int vp;               /* vertical padding for bar */
 static int sp;               /* side padding for bar */
@@ -655,14 +655,13 @@ unswallow(Client *c)
 void
 buttonpress(XEvent *e)
 {
-  unsigned int i, click;
-  int x;
+  unsigned int click;
+  int x, i;
   Arg arg = {0};
   Client *c;
   Monitor *m;
   XButtonPressedEvent *ev = &e->xbutton;
 
-  click = ClkRootWin;
   /* focus monitor if necessary */
   if ((m = wintomon(ev->window)) && m != selmon) {
     unfocus(selmon->sel, 1);
@@ -671,22 +670,19 @@ buttonpress(XEvent *e)
   }
 
   if (ev->window == selmon->barwin) {
-    i = 0, x = 0;
-    do
-      x += TEXTW(tags[i]);
-    while (ev->x >= x && ++i < LENGTH(tags));
-
-    if (i < LENGTH(tags)) {
-      click = ClkTagBar;
-      arg.ui = 1 << i;
-    } else if (ev->x < x + blw) {
-      click = ClkLtSymbol;
+    if (ev->x < ble) {
+      if (ev->x < ble - blw) {
+        i = -1, x = -ev->x;
+        do
+          x += TEXTW(tags[++i]);
+        while (x <= 0);
+          click = ClkTagBar;
+          arg.ui = 1 << i;
+      } else
+        click = ClkLtSymbol;
     } else if (ev->x < selmon->ww - wstext) {
       click = ClkWinTitle;
-    } else if (
-        ev->x < selmon->ww - lrpad / 2
-        && (x = selmon->ww - wstext + lrpad / 2 - ev->x) <= 0
-        ) {
+    } else if ((x = selmon->ww - lrpad / 2 - ev->x) > 0 && (x -= wstext - lrpad) <= 0) {
       updatedsblockssig(x);
       click = ClkStatusText;
     } else {
@@ -697,6 +693,8 @@ buttonpress(XEvent *e)
     restack(selmon);
     XAllowEvents(dpy, ReplayPointer, CurrentTime);
     click = ClkClientWin;
+  } else {
+    click = ClkRootWin;
   }
 
   for (i = 0; i < LENGTH(buttons); i++)
@@ -975,7 +973,7 @@ dirtomon(int dir)
 void
 drawbar(Monitor *m)
 {
-  int x, w = 0;
+  int x, w;
   int boxs = drw->fonts->h / 9;
   int boxw = drw->fonts->h / 6 + 2;
   unsigned int i, occ = 0, urg = 0;
@@ -988,7 +986,9 @@ drawbar(Monitor *m)
     char ctmp;
 
     drw_setscheme(drw, scheme[SchemeNorm]);
-    x = drw_text(drw, m->ww - wstext, 0, lrpad / 2, bh, 0, "", 0); /* to keep left padding clean */
+    x = m->ww - wstext;
+    drw_rect(drw, x, 0, lrpad / 2, bh, 1, 1); /* to keep left padding clean */
+    x += lrpad / 2;
     for (;;) {
       if ((unsigned char)*ts > LENGTH(colors) + 10) {
         ts++;
@@ -1007,7 +1007,7 @@ drawbar(Monitor *m)
     }
 
     drw_setscheme(drw, scheme[SchemeNorm]);
-    drw_text(drw, x, 0, m->ww - x, bh, 0, "", 0); /* to keep right padding clean */
+    drw_rect(drw, x, 0, m->ww - x, bh, 1, 1); /* to keep right padding clean */
   }
 
   for (c = m->clients; c; c = c->next) {
@@ -1026,11 +1026,18 @@ drawbar(Monitor *m)
           urg & 1 << i);
     x += w;
   }
-  w = blw = TEXTW(m->ltsymbol);
+  w = TEXTW(m->ltsymbol);
   drw_setscheme(drw, scheme[SchemeNorm]);
   x = drw_text(drw, x, 0, w, bh, lrpad / 2, m->ltsymbol, 0);
 
-  if ((w = m->ww - wstext - x) > bh) {
+  if (m == selmon) {
+    blw = w, ble = x;
+    w = m->ww - wstext - x;
+  } else {
+    w = m->ww - x;
+  }
+
+  if (w > bh) {
     if (m->sel) {
       drw_setscheme(drw, scheme[m == selmon ? SchemeTitle : SchemeNorm]);
       drw_text(drw, x, 0, w, bh, lrpad / 2, m->sel->name, 0);
@@ -1473,26 +1480,22 @@ motionnotify(XEvent *e)
   Monitor *m;
   XMotionEvent *ev = &e->xmotion;
 
-  if (ev->window != root) {
-    if (ev->window == selmon->barwin) {
-      int x;
-
-      if (ev->x < selmon->ww - lrpad / 2
-          && (x = selmon->ww - wstext + lrpad / 2 - ev->x) <= 0)
-        updatedsblockssig(x);
-      else if (statushandcursor) {
-        statushandcursor = 0;
-        XDefineCursor(dpy, selmon->barwin, cursor[CurNormal]->cursor);
-      }
+  if (ev->window == root) {
+    if ((m = recttomon(ev->x_root, ev->y_root, 1, 1)) != mon && mon) {
+      unfocus(selmon->sel, 1);
+      selmon = m;
+      focus(NULL);
     }
-    return;
+    mon = m;
+  } else if (ev->window == selmon->barwin) {
+    int x;
+    if (ev->x >= ble && (x = selmon->ww - lrpad / 2 - ev->x) > 0 && (x -= wstext - lrpad) <= 0) {
+      updatedsblockssig(x);
+    } else if (statushandcursor) {
+      statushandcursor = 0;
+      XDefineCursor(dpy, selmon->barwin, cursor[CurNormal]->cursor);
+    }
   }
-  if ((m = recttomon(ev->x_root, ev->y_root, 1, 1)) != mon && mon) {
-    unfocus(selmon->sel, 1);
-    selmon = m;
-    focus(NULL);
-  }
-  mon = m;
 }
 
 void

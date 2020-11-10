@@ -50,17 +50,17 @@ static const Rule rules[] = {
    *	WM_CLASS(STRING) = instance, class
    *	WM_NAME(STRING) = title
    */
-	/* class        instance       title           tags mask  isfloating  isterminal  noswallow   monitor */
-	{ NULL,         "ferdi",       NULL,           1 << 3,    0,          0,          0,            1 },
-	{ "firefox",    NULL,          NULL,           1 << 1,    0,          0,          1,           -1 },
-	{ "Gimp",       NULL,          NULL,           1 << 8,    0,          0,          0,           -1 },
-  { "mpv",        NULL,          NULL,           0,         0,          0,          1,           -1 },
-  { "mpv",        NULL,          "F1MAIN",       1 << 2,    0,          0,          1,           -1 },
-  { "mpv",        NULL,          "F1VERSTAPPEN", 1 << 3,    0,          0,          1,           -1 },
-  { "mpv",        NULL,          "F1NORRIS",     1 << 4,    0,          0,          1,           -1 },
-  { "St",         NULL,          NULL,           0,         0,          1,          0,           -1 },
-	{ "spotify",    NULL,          NULL,           1 << 4,    0,          0,          0,            1 },
-  { NULL,         NULL,          "Event Tester", 0,         1,          0,          1,           -1 },
+	/* class        instance    title           tags mask  isfloating  isterminal  noswallow  monitor */
+	{ NULL,         "ferdi",    NULL,           1 << 3,    0,          0,          0,          1      },
+	{ "firefox",    NULL,       NULL,           1 << 1,    0,          0,          1,         -1      },
+	{ "Gimp",       NULL,       NULL,           1 << 8,    0,          0,          0,         -1      },
+  { "mpv",        NULL,       NULL,           0,         0,          0,          1,         -1      },
+  { "mpv",        NULL,       "F1MAIN",       1 << 2,    0,          0,          1,         -1      },
+  { "mpv",        NULL,       "F1VERSTAPPEN", 1 << 3,    0,          0,          1,         -1      },
+  { "mpv",        NULL,       "F1NORRIS",     1 << 4,    0,          0,          1,         -1      },
+  { "St",         NULL,       NULL,           0,         0,          1,          0,         -1      },
+	{ "spotify",    NULL,       NULL,           1 << 4,    0,          0,          0,          1      },
+  { NULL,         NULL,       "Event Tester", 0,         1,          0,          1,         -1      },
 };
 
 /* layout(s) */
@@ -95,25 +95,26 @@ static const char *termcmd[]  = { "st", NULL };
 
 static Key keys[] = {
   /* general */
-  { MODKEY,                   XK_b,         togglebar,      {0}                  },
-  { MODKEY,                   XK_g,         togglegaps,     {0}                  },
-  { MODKEY,                   XK_Page_Up,   incnmaster,     {.i = +1 }           },
-  { MODKEY,                   XK_Page_Down, incnmaster,     {.i = -1 }           },
-  { MODKEY,                   XK_Home,      setnmaster,     {.i = nmaster }      },
-  { MODKEY,                   XK_h,         setmfact,       {.f = -0.05}         },
-  { MODKEY,                   XK_l,         setmfact,       {.f = +0.05}         },
-  { MODKEY,                   XK_Tab,       view,           {0}                  },
-  { MODKEY,                   XK_t,         setlayoutex,    {.i = +1}            },
-  { MODKEY,                   XK_space,     zoom,           {0}                  },
-  { MODKEY|ShiftMask,         XK_space,     togglefloating, {0}                  },
-  { MODKEY,                   XK_f,         togglefullscr,  {0}                  },
-  { MODKEY,                   XK_0,         view,           {.ui = ~0 }          },
-  { MODKEY|ShiftMask,         XK_0,         tag,            {.ui = ~0 }          },
-  { MODKEY,                   XK_Left,      focusmon,       {.i = -1 }           },
-  { MODKEY,                   XK_Right,     focusmon,       {.i = +1 }           },
-  { MODKEY|ShiftMask,         XK_Left,      tagmon,         {.i = -1 }           },
-  { MODKEY|ShiftMask,         XK_Right,     tagmon,         {.i = +1 }           },
-	{ MODKEY,			              XK_q,		      killclient,	    {0}                  },
+  { MODKEY,                   XK_b,         togglebar,      {0}               },
+  { MODKEY,                   XK_g,         togglegaps,     {0}               },
+  { MODKEY,                   XK_Page_Up,   incnmaster,     {.i = +1 }        },
+  { MODKEY,                   XK_Page_Down, incnmaster,     {.i = -1 }        },
+  { MODKEY,                   XK_Home,      setnmaster,     {.i = nmaster }   },
+  { MODKEY,                   XK_s,         togglesticky,   {0}               },
+  { MODKEY,                   XK_h,         setmfact,       {.f = -0.05}      },
+  { MODKEY,                   XK_l,         setmfact,       {.f = +0.05}      },
+  { MODKEY,                   XK_Tab,       view,           {0}               },
+  { MODKEY,                   XK_t,         setlayoutex,    {.i = +1}         },
+  { MODKEY,                   XK_space,     zoom,           {0}               },
+  { MODKEY|ShiftMask,         XK_space,     togglefloating, {0}               },
+  { MODKEY,                   XK_f,         togglefullscr,  {0}               },
+  { MODKEY,                   XK_0,         view,           {.ui = ~0 }       },
+  { MODKEY|ShiftMask,         XK_0,         tag,            {.ui = ~0 }       },
+  { MODKEY,                   XK_Left,      focusmon,       {.i = -1 }        },
+  { MODKEY,                   XK_Right,     focusmon,       {.i = +1 }        },
+  { MODKEY|ShiftMask,         XK_Left,      tagmon,         {.i = -1 }        },
+  { MODKEY|ShiftMask,         XK_Right,     tagmon,         {.i = +1 }        },
+	{ MODKEY,			              XK_q,		      killclient,	    {0}               },
 
   /* applications */
 	{ MODKEY,			              XK_d,		                  spawn,          {.v = dmenucmd } },

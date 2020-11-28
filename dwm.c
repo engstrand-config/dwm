@@ -3041,6 +3041,7 @@ loadxresources(void)
   ResourcePref *p;
 
   display = XOpenDisplay(NULL);
+
   resm = XResourceManagerString(display);
   if (!resm)
     return;
@@ -3048,41 +3049,44 @@ loadxresources(void)
   db = XrmGetStringDatabase(resm);
   for (p = resources; p < resources + LENGTH(resources); p++)
     resource_load(db, p->name, p->type, p->dst);
+
   XCloseDisplay(display);
 }
 
 void
 reloadxresources(const Arg *arg)
 {
-  loadxresources();
-  loadfonts();
-
   int i;
   Client *c;
   Monitor *m;
   XConfigureEvent ce;
+  unsigned int oldborderpx = borderpx;
+  unsigned int oldbarheight = barheight;
 
+  loadxresources();
   loadfonts();
 
   for (i = 0; i < LENGTH(colors); i++) {
-    scheme[i] = drw_scm_create(drw, colors[i], 3, baralpha);
+    scheme[i] = drw_scm_create(drw, colors[i], baralpha, 3);
   }
 
   for (m = mons; m; m = m->next) {
-    for (c = m->clients; c; c = c->next) {
-      c->bw = borderpx;
-      /* a more lightweight version of configure(c) */
-      ce.border_width = c->bw;
-      XSendEvent(dpy, c->win, False, StructureNotifyMask, (XEvent *)&ce);
+    if (oldborderpx != borderpx) {
+      for (c = m->clients; c; c = c->next) {
+        c->bw = borderpx;
+        /* a more lightweight version of configure(c) */
+        ce.border_width = c->bw;
+        XSendEvent(dpy, c->win, False, StructureNotifyMask, (XEvent *)&ce);
+      }
     }
 
-    updatebarpos(selmon);
-    XMoveResizeWindow(dpy, selmon->barwin, selmon->wx + sp, selmon->by + vp, selmon->ww - 2 * sp, bh);
-    arrange(m);
+    if (oldbarheight != barheight) {
+      updatebarpos(selmon);
+      XMoveResizeWindow(dpy, selmon->barwin, selmon->wx + sp, selmon->by + vp, selmon->ww - 2 * sp, bh);
+    }
   }
 
   defaultgaps(NULL);
-  focus(NULL);
 }
 
 void

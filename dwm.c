@@ -3086,6 +3086,7 @@ reloadxresources(const Arg *arg)
     }
   }
 
+  XSetWindowBorder(dpy, selmon->sel->win, scheme[SchemeSel][ColBorder].pixel);
   defaultgaps(NULL);
 }
 

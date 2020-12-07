@@ -60,6 +60,7 @@ static const Rule rules[] = {
   { "mpv",        NULL,       "F1NORRIS",     1 << 4,    0,          0,          1,         -1      },
   { "St",         NULL,       NULL,           0,         0,          1,          0,         -1      },
 	{ "spotify",    NULL,       NULL,           1 << 4,    0,          0,          0,          1      },
+	{ "tidal",      NULL,       NULL,           1 << 4,    0,          0,          0,          1      },
   { NULL,         NULL,       "Event Tester", 0,         1,          0,          1,         -1      },
 };
 
@@ -138,6 +139,7 @@ static Key keys[] = {
 	{ MODKEY,			              XK_F8,		                spawn,		      SHCMD("mailsync") },
 	{ MODKEY,			              XK_F9,		                spawn,		      SHCMD("dmenumount") },
 	{ MODKEY,			              XK_F10,		                spawn,		      SHCMD("dmenuumount") },
+	{ MODKEY,			              XK_F12,		                spawn,		      SHCMD("set-monitor-output toggle") },
 
   /* special keys (spawners) */
 	{ MODKEY,	                  XK_Insert,	              spawn,		      SHCMD("switch-kb-layout") },

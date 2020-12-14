@@ -142,7 +142,7 @@ static Key keys[] = {
 	{ MODKEY,			              XK_F12,		                spawn,		      SHCMD("set-monitor-output toggle") },
 
   /* special keys (spawners) */
-	{ MODKEY,	                  XK_Insert,	              spawn,		      SHCMD("switch-kb-layout") },
+	{ MODKEY,	                  XK_Insert,	              spawn,		      SHCMD("set-kb-layout toggle") },
 	{ ShiftMask,	              XK_Print,	                spawn,		      SHCMD("maimpick") },
 	{ 0,                        XF86XK_WWW,		            spawn,	        SHCMD("$BROWSER") },
 	{ 0,                        XF86XK_TaskPane,		      spawn,	        SHCMD("st -e htop") },

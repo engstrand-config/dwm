@@ -114,6 +114,8 @@ static Key keys[] = {
   { MODKEY,                   XK_Down,      focusmon,             {.i = -1 }        },
   { MODKEY|ShiftMask,         XK_Left,      tagmon,               {.i = -1 }        },
   { MODKEY|ShiftMask,         XK_Right,     tagmon,               {.i = +1 }        },
+  { MODKEY|ShiftMask,         XK_Up,        tagmon,               {.i = +1 }        },
+  { MODKEY|ShiftMask,         XK_Down,      tagmon,               {.i = -1 }        },
 	{ MODKEY,			              XK_q,		      killclient,	          {0}               },
 
   /* applications */

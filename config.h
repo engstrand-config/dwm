@@ -1,5 +1,4 @@
 #include <X11/XF86keysym.h>
-
 /* general */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const int smartgaps          = 0;        /* 1 means no outer gap when there is only one window */
@@ -128,9 +127,10 @@ static Key keys[] = {
 	{ MODKEY,		                XK_m,		                  spawn,		      SHCMD("st -e ncmpcpp") },
 	{ MODKEY,			              XK_x,		                  spawn,		      SHCMD("betterlockscreen -l dim") },
 	{ MODKEY,			              XK_End,	                  spawn,	        SHCMD("pkill -USR1 \"^redshift$\"") },
+  { MODKEY,                   XK_v,                     spawn,          SHCMD("st -e nvim") },
 	{ MODKEY,			              XK_n,		                  spawn,	      	SHCMD("st -e newsboat-signal-on-exit") },
 	{ MODKEY|ShiftMask,		      XK_a,		                  spawn,		      SHCMD("st -e pulsemixer; sigdsblocks 1") },
-	{ MODKEY,			              XK_e,		                  spawn,		      SHCMD("st -e neomutt ; sigdsblocks 5; rmdir ~/.abook") },
+	{ MODKEY,			              XK_e,		                  spawn,		      SHCMD("st -e aerc") },
 	{ MODKEY|ShiftMask,		      XK_c,		                  spawn,		      SHCMD("mpv --no-cache --no-osc --no-input-default-bindings --input-conf=/dev/null --title=mpvfloat $(ls /dev/video[0,2,4,6,8] | tail -n 1)") },
 
   /* function keys */

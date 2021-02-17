@@ -49,14 +49,15 @@ static const Rule rules[] = {
    *	WM_CLASS(STRING) = instance, class
    *	WM_NAME(STRING) = title
    */
-	/* class        instance    title           tags mask  isfloating  isterminal  noswallow  monitor */
-	{ NULL,         "ferdi",    NULL,           1 << 3,    0,          0,          0,          1      },
-	{ "firefox",    NULL,       NULL,           1 << 1,    0,          0,          1,         -1      },
-	{ "Gimp",       NULL,       NULL,           1 << 8,    0,          0,          0,         -1      },
-  { "St",         NULL,       NULL,           0,         0,          1,          0,         -1      },
-	{ "spotify",    NULL,       NULL,           1 << 4,    0,          0,          0,          1      },
-	{ "tidal",      NULL,       NULL,           1 << 4,    0,          0,          0,          1      },
-  { NULL,         NULL,       "Event Tester", 0,         1,          0,          1,         -1      },
+	/* class        instance    title                 tags mask  isfloating  isterminal  noswallow  monitor */
+	{ NULL,         "ferdi",    NULL,                 1 << 3,    0,          0,          0,          1      },
+	{ "firefox",    NULL,       NULL,                 1 << 1,    0,          0,          1,         -1      },
+	{ "Gimp",       NULL,       NULL,                 1 << 8,    0,          0,          0,         -1      },
+  { "St",         NULL,       NULL,                 0,         0,          1,          0,         -1      },
+	{ "spotify",    NULL,       NULL,                 1 << 4,    0,          0,          0,          1      },
+	{ "tidal",      NULL,       NULL,                 1 << 4,    0,          0,          0,          1      },
+  { NULL,         NULL,       "Event Tester",       0,         1,          0,          1,         -1      },
+  { NULL,         NULL,       "Picture-in-Picture", 0,         1,          0,          1,         -1      },
 };
 
 /* layout(s) */

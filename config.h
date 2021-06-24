@@ -96,7 +96,7 @@ static Key keys[] = {
   { MODKEY,                   XK_g,         togglegaps,           {0}               },
   { MODKEY,                   XK_Page_Up,   incnmaster,           {.i = +1 }        },
   { MODKEY,                   XK_Page_Down, incnmaster,           {.i = -1 }        },
-  { MODKEY,                   XK_Home,      setnmaster,           {.i = nmaster }   },
+  { MODKEY,                   XK_Home,      setnmaster,           {.i = 1  }   	    },
   { MODKEY,                   XK_s,         togglesticky,         {0}               },
   { MODKEY,                   XK_h,         setmfact,             {.f = -0.05}      },
   { MODKEY,                   XK_l,         setmfact,             {.f = +0.05}      },

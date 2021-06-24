@@ -899,7 +899,7 @@ createmon(void)
   m = ecalloc(1, sizeof(Monitor));
   m->tagset[0] = m->tagset[1] = 1;
   m->mfact = mfact;
-  m->nmaster = nmaster;
+  m->nmaster = 1;
   m->showbar = showbar;
   m->topbar = topbar;
   m->gappih = gappih;

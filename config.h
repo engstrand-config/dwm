@@ -177,8 +177,8 @@ static Key keys[] = {
 	{ 0,                        XF86XK_AudioLowerVolume,	spawn,		      SHCMD("pamixer -u -d 3; sigdsblocks 1") },
 
   /* backlighting */
-  { 0,                        XF86XK_MonBrightnessUp,	  spawn,	        SHCMD("xbacklight -inc 11") },
-	{ 0,                        XF86XK_MonBrightnessDown,	spawn,	        SHCMD("xbacklight -dec 11") },
+  	{ 0,                        XF86XK_MonBrightnessUp,	spawn,	        SHCMD("brightnessctl s +10%") },
+	{ 0,                        XF86XK_MonBrightnessDown,	spawn,	        SHCMD("brightnessctl s 10%-") },
 
   /* tags */
   TAGKEYS(                    XK_1,                     0      )

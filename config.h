@@ -14,11 +14,11 @@ static char font[]                  = "JetBrains Mono NL:style=Bold:size=9:antia
 
 static unsigned int baralpha        = 225;      /* transparency of bar */
 static unsigned int barheight       = 20;       /* height of the bar */
-static unsigned int borderpx        = 1;        /* border pixel of windows */
-static unsigned int gappih          = 10;       /* horiz inner gap between windows */
-static unsigned int gappiv          = 10;       /* vert inner gap between windows */
-static unsigned int gappoh          = 10;       /* horiz outer gap between windows and screen edge */
-static unsigned int gappov          = 10;       /* vert outer gap between windows and screen edge */
+static unsigned int borderpx        = 2;        /* border pixel of windows */
+static unsigned int gappih          = 15;       /* horiz inner gap between windows */
+static unsigned int gappiv          = 15;       /* vert inner gap between windows */
+static unsigned int gappoh          = 15;       /* horiz outer gap between windows and screen edge */
+static unsigned int gappov          = 15;       /* vert outer gap between windows and screen edge */
 static unsigned int gapsenabled     = 1;        /* enables gaps, used by togglegaps */
 static char normbgcolor[]           = "#222222";
 static char normbordercolor[]       = "#444444";
@@ -26,11 +26,11 @@ static char normfgcolor[]           = "#bbbbbb";
 static char selfgcolor[]            = "#eeeeee";
 static char selbordercolor[]        = "#005577";
 static char selbgcolor[]            = "#005577";
-static char titlebgcolor[]          = "#005577";
-static char titlefgcolor[]          = "#eeeeee";
-static char titlebordercolor[]      = "#005577";
-static char successcolor[]          = "#005577";
-static char criticalcolor[]          = "#005577";
+static char titlebgcolor[]          = "#4f2b2b";
+static char titlefgcolor[]          = "#000000";
+static char titlebordercolor[]      = "#282828";
+static char successcolor[]          = "#97961a";
+static char criticalcolor[]         = "#cc241d";
 
 static char *colors[][3] = {
     [SchemeNorm]        = { normfgcolor,    normbgcolor,    normbordercolor   },

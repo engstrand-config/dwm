@@ -10,7 +10,7 @@ static const int statustextsidepad  = 10;       /* right side padding for status
 static const int swallowfloating    = 0;        /* 1 means swallow floating windows by default */
 
 /* appearance */
-static char font[]                  = "JetBrains Mono NL:style=Bold:size=9:antialias=true:autohint=true";
+static char font[]                  = "JetBrains Mono NL:style=Bold:size=10:antialias=true:autohint=true";
 
 static unsigned int baralpha        = 225;      /* transparency of bar */
 static unsigned int barheight       = 20;       /* height of the bar */
